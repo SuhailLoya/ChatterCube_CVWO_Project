@@ -1,4 +1,5 @@
-import React from "react";
+import { Box, Paper, Typography } from "@mui/material";
+import { Topic } from "../interfaces";
 
 interface TopicsProps {
     topics: Topic[];
@@ -6,17 +7,23 @@ interface TopicsProps {
 
 const Topics = ({ topics }: TopicsProps) => {
     return (
-        <ol>
+        <Box sx={{ m: 2, p: 3 }}>
             {topics.map((topic) => (
-                <li key={topic.id}>
-                    <strong>{topic.title}</strong> <p>topic.body</p>
-                    <ul >
-                        <li>{topic.tags}</li>
-                    </ul>
-                    <p></p>
-                </li>
+                <Paper
+                    elevation={3}
+                    key={topic.id}
+                    sx={{ bgcolor: "lightblue" }}
+                >
+                    <Box sx={{ p: 0.5, m: 3 }}>
+                        <Typography variant="h4" sx={{ m: 2 }}>
+                            {topic.title}
+                        </Typography>
+                        <Typography variant="h5">{topic.body}</Typography>
+                        <Typography sx={{ m: 2 }}>{topic.tags}</Typography>
+                    </Box>
+                </Paper>
             ))}
-        </ol>
+        </Box>
     );
 };
 

@@ -2,15 +2,9 @@ import { useEffect, useState } from "react";
 import "./App.css";
 import axios from "axios";
 import Topics from "./components/Topics";
-
+import { Topic } from "./interfaces";
+import { Box, Container, Typography } from "@mui/material";
 const API_URL = "http://localhost:3000/api/v1/topics";
-
-interface Topic {
-    id: number;
-    title: string;
-    body: Text;
-    tags: string;
-}
 
 function App() {
     const [error, setError] = useState(null);
@@ -31,16 +25,21 @@ function App() {
     }, []);
 
     if (error) {
-        return <div>Error: {error}</div>;
+        return <div>{error}</div>;
     } else if (!isMounted) {
         return <div>Please Wait</div>;
     }
 
     return (
-        <>
-            <h1>Welcome to ChatterCube!!!</h1>
+        <Container sx={{ height: 1000 }}>
+            <Typography
+                variant="h1"
+                sx={{ my: 2, textAlign: "center", color: "primary.main" }}
+            >
+                Welcome to ChatterCube!!!
+            </Typography>
             <Topics topics={topics} />
-        </>
+        </Container>
     );
 }
 
