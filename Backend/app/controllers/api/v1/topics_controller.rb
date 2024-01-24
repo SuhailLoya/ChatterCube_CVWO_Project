@@ -18,7 +18,7 @@ class Api::V1::TopicsController < ApplicationController
     @topic = Topic.new(topic_params)
 
     if @topic.save
-      render json: @topic, status: :created, location: @topic
+      render json: @topic, status: :created
     else
       render json: @topic.errors, status: :unprocessable_entity
     end

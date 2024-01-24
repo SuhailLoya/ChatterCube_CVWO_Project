@@ -1,5 +1,5 @@
 import { Box, Paper, Typography } from "@mui/material";
-import { Topic } from "../interfaces";
+import { Topic } from "../../interfaces";
 
 interface TopicProps {
     topics: Topic[];

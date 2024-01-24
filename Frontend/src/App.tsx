@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
+import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
 import "./App.css";
 import axios from "axios";
-import Topics from "./components/Topics";
+import Topics from "./components/Topics/Topics";
+import TopicForm from "./components/Topics/TopicForm";
 import { Topic } from "./interfaces";
-import { Box, Container, Typography } from "@mui/material";
+import { Container, Typography, Button } from "@mui/material";
 const API_URL = "http://localhost:3000/api/v1/topics";
 
 function App() {
@@ -30,16 +32,49 @@ function App() {
         return <div></div>;
     }
 
+    // using to update topics with new data without refreshing the page
+    const handleTopicCreated = (newTopic: Topic) => {
+        setTopics((prevTopics) => [...prevTopics, newTopic]);
+    };
     return (
-        <Container sx={{ height: 1000 }}>
-            <Typography
-                variant="h1"
-                sx={{ my: 2, textAlign: "center", color: "primary.main" }}
-            >
-                Welcome to ChatterCube!!!
-            </Typography>
-            <Topics topics={topics} />
-        </Container>
+        <Router>
+            <Container sx={{ height: 1000 }}>
+                <Routes>
+                    <Route
+                        path="/create-topic"
+                        element={
+                            <TopicForm onTopicCreated={handleTopicCreated} />
+                        }
+                    />
+                    <Route
+                        path="/"
+                        element={
+                            <>
+                                <Typography
+                                    variant="h1"
+                                    sx={{
+                                        my: 2,
+                                        textAlign: "center",
+                                        color: "primary.main",
+                                    }}
+                                >
+                                    Welcome to ChatterCube!!!
+                                </Typography>
+                                <Topics topics={topics} />
+                                <Button
+                                    component={Link}
+                                    to="/create-topic"
+                                    variant="contained"
+                                    color="primary"
+                                >
+                                    Create a New Topic
+                                </Button>
+                            </>
+                        }
+                    />
+                </Routes>
+            </Container>
+        </Router>
     );
 }
 
