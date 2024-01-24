@@ -31,16 +31,22 @@ const TopicView = ({ onDeleteTopic }: TopicViewProps) => {
     }
 
     const handleDelete = () => {
-        axios
-            .delete(`http://localhost:3000/api/v1/topics/${id}`)
-            .then(() => {
-                console.log("Topic deleted successfully");
-                onDeleteTopic(topic);
-                navigate("/");
-            })
-            .catch((error) => {
-                console.error("Error deleting topic:", error);
-            });
+        const isConfirmed = window.confirm(
+            "Are you sure you want to delete this topic?"
+        );
+
+        if (isConfirmed) {
+            axios
+                .delete(`http://localhost:3000/api/v1/topics/${id}`)
+                .then(() => {
+                    console.log("Topic deleted successfully");
+                    onDeleteTopic(topic);
+                    navigate("/");
+                })
+                .catch((error) => {
+                    console.error("Error deleting topic:", error);
+                });
+        }
     };
 
     return (
