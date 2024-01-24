@@ -89,8 +89,8 @@ function App() {
                     }
                 />
                 <Route
-                    path="/topics/:id" // Route for individual topic, :id is a parameter
-                    element={<TopicView onDeleteTopic={handleDeleteTopic} />} // Render the IndividualTopic component
+                    path="/topics/:id"
+                    element={<TopicView onDeleteTopic={handleDeleteTopic} />}
                 />
                 <Route
                     path="/topics/:id/edit"
