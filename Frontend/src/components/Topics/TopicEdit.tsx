@@ -42,6 +42,7 @@ const TopicEdit = ({ onUpdateTopic }: TopicEditProps) => {
             .put(`http://localhost:3000/api/v1/topics/${id}`, formData)
             .then((response) => {
                 const updatedTopic: Topic = response.data;
+                console.log("Topic updated successfully");
                 onUpdateTopic(updatedTopic);
                 navigate(`/topics/${id}`);
             })

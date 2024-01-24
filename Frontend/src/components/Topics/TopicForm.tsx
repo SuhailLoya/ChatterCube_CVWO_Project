@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { Box, Button, TextField, Typography } from "@mui/material";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { Topic } from "../../interfaces";
 
 interface TopicFormProps {
@@ -41,6 +41,7 @@ const TopicForm = ({ onTopicCreated }: TopicFormProps) => {
                     body: "",
                     tags: "",
                 });
+                console.log("Topic created successfully");
                 navigate("/");
             })
             .catch((error) => {
@@ -60,8 +61,6 @@ const TopicForm = ({ onTopicCreated }: TopicFormProps) => {
 
     return (
         <Box
-            component="form"
-            onSubmit={handleSubmit}
             sx={{
                 maxWidth: 700,
                 margin: "auto",
@@ -71,74 +70,91 @@ const TopicForm = ({ onTopicCreated }: TopicFormProps) => {
                 borderRadius: 10,
             }}
         >
-            <Typography variant="h4" sx={{ m: 2 }}>
-                Create a New Topic
-            </Typography>
-            <TextField
-                fullWidth
-                label="Username"
-                name="username"
-                value={formData.username}
-                onChange={handleChange}
-                margin="normal"
-                error={errors.some((err) =>
-                    err.toLowerCase().includes("username")
-                )}
-                helperText={
-                    errors.find((err) =>
+            <Box component="form" onSubmit={handleSubmit}>
+                <Typography variant="h4" sx={{ m: 2 }}>
+                    Create a New Topic
+                </Typography>
+                <TextField
+                    fullWidth
+                    label="Username"
+                    name="username"
+                    value={formData.username}
+                    onChange={handleChange}
+                    margin="normal"
+                    error={errors.some((err) =>
                         err.toLowerCase().includes("username")
-                    ) || " "
-                }
-            />
-            <TextField
-                fullWidth
-                label="Title"
-                name="title"
-                value={formData.title}
-                onChange={handleChange}
-                margin="normal"
-                error={errors.some((err) =>
-                    err.toLowerCase().includes("title")
-                )}
-                helperText={
-                    errors.find((err) => err.toLowerCase().includes("title")) ||
-                    " "
-                }
-            />
-            <TextField
-                fullWidth
-                multiline
-                label="Body"
-                name="body"
-                value={formData.body}
-                onChange={handleChange}
-                margin="normal"
-                error={errors.some((err) => err.toLowerCase().includes("body"))}
-                helperText={
-                    errors.find((err) => err.toLowerCase().includes("body")) ||
-                    " "
-                }
-            />
-            <TextField
-                fullWidth
-                label="Tags"
-                name="tags"
-                value={formData.tags}
-                onChange={handleChange}
-                margin="normal"
-                error={errors.some((err) => err.toLowerCase().includes("tags"))}
-                helperText={
-                    errors.find((err) => err.toLowerCase().includes("tags")) ||
-                    " "
-                }
-            />
+                    )}
+                    helperText={
+                        errors.find((err) =>
+                            err.toLowerCase().includes("username")
+                        ) || " "
+                    }
+                />
+                <TextField
+                    fullWidth
+                    label="Title"
+                    name="title"
+                    value={formData.title}
+                    onChange={handleChange}
+                    margin="normal"
+                    error={errors.some((err) =>
+                        err.toLowerCase().includes("title")
+                    )}
+                    helperText={
+                        errors.find((err) =>
+                            err.toLowerCase().includes("title")
+                        ) || " "
+                    }
+                />
+                <TextField
+                    fullWidth
+                    multiline
+                    label="Body"
+                    name="body"
+                    value={formData.body}
+                    onChange={handleChange}
+                    margin="normal"
+                    error={errors.some((err) =>
+                        err.toLowerCase().includes("body")
+                    )}
+                    helperText={
+                        errors.find((err) =>
+                            err.toLowerCase().includes("body")
+                        ) || " "
+                    }
+                />
+                <TextField
+                    fullWidth
+                    label="Tags"
+                    name="tags"
+                    value={formData.tags}
+                    onChange={handleChange}
+                    margin="normal"
+                    error={errors.some((err) =>
+                        err.toLowerCase().includes("tags")
+                    )}
+                    helperText={
+                        errors.find((err) =>
+                            err.toLowerCase().includes("tags")
+                        ) || " "
+                    }
+                />
+                <Button
+                    type="submit"
+                    variant="contained"
+                    color="primary"
+                    sx={{ mt: 1 }}
+                >
+                    Create Topic
+                </Button>
+            </Box>
             <Button
-                type="submit"
+                component={Link}
+                to="/"
                 variant="contained"
-                color="primary"
-                sx={{ mt: 2 }}
+                sx={{ mt: 2, mb: 2 }}
             >
-                Create Topic
+                Back
             </Button>
         </Box>
     );
