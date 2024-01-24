@@ -27,7 +27,7 @@ function App() {
     if (error) {
         return <div>{error}</div>;
     } else if (!isMounted) {
-        return <div>Please Wait</div>;
+        return <div></div>;
     }
 
     return (

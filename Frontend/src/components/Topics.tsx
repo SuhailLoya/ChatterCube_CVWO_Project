@@ -1,11 +1,11 @@
 import { Box, Paper, Typography } from "@mui/material";
 import { Topic } from "../interfaces";
 
-interface TopicsProps {
+interface TopicProps {
     topics: Topic[];
 }
 
-const Topics = ({ topics }: TopicsProps) => {
+const Topics = ({ topics }: TopicProps) => {
     return (
         <Box sx={{ m: 2, p: 3 }}>
             {topics.map((topic) => (
