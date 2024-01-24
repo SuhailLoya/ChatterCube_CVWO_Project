@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { Box, Button, TextField, Typography } from "@mui/material";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 import { Topic } from "../../interfaces";
 
 interface TopicFormProps {
@@ -9,6 +10,7 @@ interface TopicFormProps {
 }
 
 const TopicForm = ({ onTopicCreated }: TopicFormProps) => {
+    const navigate = useNavigate();
     const [formData, setFormData] = useState({
         username: "",
         title: "",
@@ -16,14 +18,16 @@ const TopicForm = ({ onTopicCreated }: TopicFormProps) => {
         tags: "",
     });
 
+    const [errors, setErrors] = useState<string[]>([]);
+
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        //   console.log("handleChange");
         const { name, value } = e.target;
         setFormData((prevData) => ({ ...prevData, [name]: value }));
+        // Clear the error when the user starts typing again
+        setErrors([]);
     };
 
     const handleSubmit = (e: React.FormEvent) => {
-        //    console.log("handleSubmit");
         e.preventDefault();
 
         axios
@@ -37,9 +41,20 @@ const TopicForm = ({ onTopicCreated }: TopicFormProps) => {
                     body: "",
                     tags: "",
                 });
+                navigate("/");
             })
             .catch((error) => {
-                console.error("Error creating topic:", error);
+                if (
+                    error.response &&
+                    error.response.data &&
+                    error.response.data.errors
+                ) {
+                    // Handle validation errors from the server
+                    setErrors(error.response.data.errors);
+                    console.log(error.response.data.errors);
+                } else {
+                    console.error("Error creating topic:", error);
+                }
             });
     };
 
@@ -50,10 +65,10 @@ const TopicForm = ({ onTopicCreated }: TopicFormProps) => {
             sx={{
                 maxWidth: 700,
                 margin: "auto",
-                mt: 5,
+                mt: 2,
                 p: 2,
                 border: "1px solid #cccccc",
-                borderRadius: 4,
+                borderRadius: 10,
             }}
         >
             <Typography variant="h4" sx={{ m: 2 }}>
@@ -66,6 +81,14 @@ const TopicForm = ({ onTopicCreated }: TopicFormProps) => {
                 value={formData.username}
                 onChange={handleChange}
                 margin="normal"
+                error={errors.some((err) =>
+                    err.toLowerCase().includes("username")
+                )}
+                helperText={
+                    errors.find((err) =>
+                        err.toLowerCase().includes("username")
+                    ) || " "
+                }
             />
             <TextField
                 fullWidth
@@ -74,6 +97,13 @@ const TopicForm = ({ onTopicCreated }: TopicFormProps) => {
                 value={formData.title}
                 onChange={handleChange}
                 margin="normal"
+                error={errors.some((err) =>
+                    err.toLowerCase().includes("title")
+                )}
+                helperText={
+                    errors.find((err) => err.toLowerCase().includes("title")) ||
+                    " "
+                }
             />
             <TextField
                 fullWidth
@@ -83,6 +113,11 @@ const TopicForm = ({ onTopicCreated }: TopicFormProps) => {
                 value={formData.body}
                 onChange={handleChange}
                 margin="normal"
+                error={errors.some((err) => err.toLowerCase().includes("body"))}
+                helperText={
+                    errors.find((err) => err.toLowerCase().includes("body")) ||
+                    " "
+                }
             />
             <TextField
                 fullWidth
@@ -91,6 +126,11 @@ const TopicForm = ({ onTopicCreated }: TopicFormProps) => {
                 value={formData.tags}
                 onChange={handleChange}
                 margin="normal"
+                error={errors.some((err) => err.toLowerCase().includes("tags"))}
+                helperText={
+                    errors.find((err) => err.toLowerCase().includes("tags")) ||
+                    " "
+                }
             />
             <Button
                 type="submit"

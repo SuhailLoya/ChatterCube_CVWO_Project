@@ -20,7 +20,7 @@ class Api::V1::TopicsController < ApplicationController
     if @topic.save
       render json: @topic, status: :created
     else
-      render json: @topic.errors, status: :unprocessable_entity
+      render json: { errors: @topic.errors.full_messages }, status: :unprocessable_entity
     end
   end
 

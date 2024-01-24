@@ -38,18 +38,16 @@ function App() {
     };
     return (
         <Router>
-            <Container sx={{ height: 1000 }}>
-                <Routes>
-                    <Route
-                        path="/create-topic"
-                        element={
-                            <TopicForm onTopicCreated={handleTopicCreated} />
-                        }
-                    />
-                    <Route
-                        path="/"
-                        element={
-                            <>
+            <Routes>
+                <Route
+                    path="/create-topic"
+                    element={<TopicForm onTopicCreated={handleTopicCreated} />}
+                />
+                <Route
+                    path="/"
+                    element={
+                        <>
+                            <Container sx={{ height: 1000 }}>
                                 <Typography
                                     variant="h1"
                                     sx={{
@@ -69,11 +67,11 @@ function App() {
                                 >
                                     Create a New Topic
                                 </Button>
-                            </>
-                        }
-                    />
-                </Routes>
-            </Container>
+                            </Container>
+                        </>
+                    }
+                />
+            </Routes>
         </Router>
     );
 }
