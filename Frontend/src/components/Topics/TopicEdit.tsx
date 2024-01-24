@@ -9,7 +9,7 @@ interface TopicEditProps {
     onUpdateTopic: (updatedTopic: Topic) => void;
 }
 
-const TopicEdit: React.FC<TopicEditProps> = ({ onUpdateTopic }) => {
+const TopicEdit = ({ onUpdateTopic }: TopicEditProps) => {
     const navigate = useNavigate();
     const { id } = useParams();
     const [formData, setFormData] = useState<Topic>({
@@ -157,7 +157,7 @@ const TopicEdit: React.FC<TopicEditProps> = ({ onUpdateTopic }) => {
                     component={Link}
                     to={`/topics/${id}`}
                     variant="contained"
-                    sx={{ mt: 2, ml: 2 }}
+                    sx={{ p: 0.5, mb: 2 }}
                 >
                     Cancel
                 </Button>

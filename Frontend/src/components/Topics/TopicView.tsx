@@ -1,12 +1,17 @@
 // TopicView.tsx
 import React, { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { Button, Typography, Box, Paper } from "@mui/material";
 import { Topic } from "../../interfaces";
 
-const TopicView = () => {
-    const { id } = useParams(); 
+interface TopicViewProps {
+    onDeleteTopic: (deletedTopic: Topic) => void;
+}
+
+const TopicView = ({ onDeleteTopic }: TopicViewProps) => {
+    const { id } = useParams();
+    const navigate = useNavigate();
     const [topic, setTopic] = useState<Topic>();
 
     useEffect(() => {
@@ -26,7 +31,16 @@ const TopicView = () => {
     }
 
     const handleDelete = () => {
-        console.log("Delete button clicked");
+        axios
+            .delete(`http://localhost:3000/api/v1/topics/${id}`)
+            .then(() => {
+                console.log("Topic deleted successfully");
+                onDeleteTopic(topic);
+                navigate("/");
+            })
+            .catch((error) => {
+                console.error("Error deleting topic:", error);
+            });
     };
 
     return (
@@ -48,6 +62,7 @@ const TopicView = () => {
                         to={`/topics/${topic.id}/edit`}
                         variant="contained"
                         color="primary"
+                        sx={{ mb: 1 }}
                     >
                         Edit
                     </Button>
@@ -55,11 +70,16 @@ const TopicView = () => {
                         variant="contained"
                         color="error"
                         onClick={handleDelete}
-                        sx={{ ml: 4, mr: 4 }}
+                        sx={{ ml: 4, mr: 4, mb: 1 }}
                     >
                         Delete
                     </Button>
-                    <Button component={Link} to="/" variant="contained">
+                    <Button
+                        component={Link}
+                        to="/"
+                        variant="contained"
+                        sx={{ mb: 1 }}
+                    >
                         Back
                     </Button>
                 </Box>

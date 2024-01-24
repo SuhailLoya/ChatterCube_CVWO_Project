@@ -47,6 +47,12 @@ function App() {
         );
     };
 
+    const handleDeleteTopic = (deletedTopic: Topic) => {
+        setTopics((prevTopics) =>
+            prevTopics.filter((topic) => topic.id !== deletedTopic.id)
+        );
+    };
+
     return (
         <Router>
             <Routes>
@@ -84,7 +90,7 @@ function App() {
                 />
                 <Route
                     path="/topics/:id" // Route for individual topic, :id is a parameter
-                    element={<TopicView />} // Render the IndividualTopic component
+                    element={<TopicView onDeleteTopic={handleDeleteTopic} />} // Render the IndividualTopic component
                 />
                 <Route
                     path="/topics/:id/edit"
