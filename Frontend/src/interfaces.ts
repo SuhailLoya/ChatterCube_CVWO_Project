@@ -1,5 +1,6 @@
 export interface Topic {
-    id: number;
+    id?: number;
+    username: string;
     title: string;
     body: string;
     tags: string;

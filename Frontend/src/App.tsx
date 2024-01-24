@@ -5,7 +5,9 @@ import axios from "axios";
 import Topics from "./components/Topics/Topics";
 import TopicForm from "./components/Topics/TopicForm";
 import { Topic } from "./interfaces";
+import TopicView from "./components/Topics/TopicView";
 import { Container, Typography, Button } from "@mui/material";
+import TopicEdit from "./components/Topics/TopicEdit";
 const API_URL = "http://localhost:3000/api/v1/topics";
 
 function App() {
@@ -36,6 +38,15 @@ function App() {
     const handleTopicCreated = (newTopic: Topic) => {
         setTopics((prevTopics) => [...prevTopics, newTopic]);
     };
+
+    const handleUpdateTopic = (updatedTopic: Topic) => {
+        setTopics((prevTopics) =>
+            prevTopics.map((topic) =>
+                topic.id === updatedTopic.id ? updatedTopic : topic
+            )
+        );
+    };
+
     return (
         <Router>
             <Routes>
@@ -70,6 +81,14 @@ function App() {
                             </Container>
                         </>
                     }
+                />
+                <Route
+                    path="/topics/:id" // Route for individual topic, :id is a parameter
+                    element={<TopicView />} // Render the IndividualTopic component
+                />
+                <Route
+                    path="/topics/:id/edit"
+                    element={<TopicEdit onUpdateTopic={handleUpdateTopic} />}
                 />
             </Routes>
         </Router>

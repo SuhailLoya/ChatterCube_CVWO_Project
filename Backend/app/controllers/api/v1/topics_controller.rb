@@ -29,7 +29,7 @@ class Api::V1::TopicsController < ApplicationController
     if @topic.update(topic_params)
       render json: @topic
     else
-      render json: @topic.errors, status: :unprocessable_entity
+      render json: { errors: @topic.errors.full_messages }, status: :unprocessable_entity
     end
   end
 
@@ -46,6 +46,6 @@ class Api::V1::TopicsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def topic_params
-      params.require(:topic).permit(:username, :title, :body, :tags)
+      params.require(:topic).permit(:username, :title, :body, :tags, :id, :created_at, :updated_at)
     end
 end

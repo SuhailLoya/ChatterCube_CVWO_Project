@@ -11,7 +11,7 @@ interface TopicFormProps {
 
 const TopicForm = ({ onTopicCreated }: TopicFormProps) => {
     const navigate = useNavigate();
-    const [formData, setFormData] = useState({
+    const [formData, setFormData] = useState<Topic>({
         username: "",
         title: "",
         body: "",
