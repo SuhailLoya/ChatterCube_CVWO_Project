@@ -1,4 +1,3 @@
-// TopicEdit.tsx
 import React, { useState, useEffect } from "react";
 import { Paper, Box, Button, TextField, Typography } from "@mui/material";
 import axios from "axios";
