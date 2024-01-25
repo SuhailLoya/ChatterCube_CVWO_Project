@@ -7,7 +7,7 @@ interface TopicsProps {
     topics: Topic[];
 }
 
-const Topics: React.FC<TopicsProps> = ({ topics }) => {
+const Topics = ({ topics }: TopicsProps) => {
     return (
         <Box sx={{ m: 2, p: 3 }}>
             {topics.map((topic) => (

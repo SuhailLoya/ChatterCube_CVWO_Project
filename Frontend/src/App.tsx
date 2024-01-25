@@ -64,7 +64,7 @@ function App() {
                     path="/"
                     element={
                         <>
-                            <Container sx={{ height: 1000 }}>
+                            <Container>
                                 <Typography
                                     variant="h1"
                                     sx={{

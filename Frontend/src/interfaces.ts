@@ -5,3 +5,10 @@ export interface Topic {
     body: string;
     tags: string;
 }
+
+export interface Comment {
+    id?: number;
+    content: string;
+    username: string;
+    topic_id: string;
+}
