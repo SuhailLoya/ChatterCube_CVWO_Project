@@ -63,6 +63,13 @@ function App() {
             });
     }, []);
 
+    if (!isMounted) {
+        return <div>Loading...</div>;
+    }
+    if (error) {
+        return <div> error</div>;
+    }
+
     const handleTopicCreated = (newTopic: Topic) => {
         setTopics((prevTopics) => [...prevTopics, newTopic]);
     };

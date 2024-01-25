@@ -23,7 +23,7 @@ const SignupForm = () => {
         console.log(formData);
         e.preventDefault();
         try {
-            const response = await axios.post("http://localhost:3000/users", {
+            await axios.post("http://localhost:3000/users", {
                 user: formData,
             });
             //console.log("Signup successful:", response.data);

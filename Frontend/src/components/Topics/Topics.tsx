@@ -1,4 +1,3 @@
-import React from "react";
 import { Box, Paper, Typography, Link } from "@mui/material";
 import { Link as RouterLink } from "react-router-dom";
 import { Topic } from "../../interfaces";
