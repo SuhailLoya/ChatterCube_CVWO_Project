@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Box, Button, TextField, Typography } from "@mui/material";
 import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
@@ -11,7 +11,7 @@ interface TopicFormProps {
 const TopicForm = ({ onTopicCreated }: TopicFormProps) => {
     const navigate = useNavigate();
     const [formData, setFormData] = useState<Topic>({
-        username: "",
+        username: "aa",
         title: "",
         body: "",
         tags: "",
@@ -19,10 +19,28 @@ const TopicForm = ({ onTopicCreated }: TopicFormProps) => {
 
     const [errors, setErrors] = useState<string[]>([]);
 
+    useEffect(() => {
+        axios
+            .get("http://localhost:3000/user", {
+                headers: {
+                    Accept: "application/json",
+                    Authorization: `Bearer ${localStorage.getItem("token")}`,
+                },
+            })
+            .then((response) => {
+                setFormData((prevData) => ({
+                    ...prevData,
+                    username: response.data.email,
+                }));
+            })
+            .catch((error) => {
+                console.error("Error fetching current user:", error);
+            });
+    }, []);
+
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         setFormData((prevData) => ({ ...prevData, [name]: value }));
-        // Clear the error when the user starts typing again
         setErrors([]);
     };
 
@@ -30,12 +48,17 @@ const TopicForm = ({ onTopicCreated }: TopicFormProps) => {
         e.preventDefault();
 
         axios
-            .post("http://localhost:3000/api/v1/topics", formData)
+            .post("http://localhost:3000/api/v1/topics", formData, {
+                headers: {
+                    Accept: "application/json",
+                    Authorization: `Bearer ${localStorage.getItem("token")}`,
+                },
+            })
             .then((response) => {
                 const newTopic: Topic = response.data;
                 onTopicCreated(newTopic);
                 setFormData({
-                    username: "",
+                    username: "aa",
                     title: "",
                     body: "",
                     tags: "",
@@ -88,6 +111,7 @@ const TopicForm = ({ onTopicCreated }: TopicFormProps) => {
                             err.toLowerCase().includes("username")
                         ) || " "
                     }
+                    disabled // Disable the username field to prevent modification
                 />
                 <TextField
                     fullWidth

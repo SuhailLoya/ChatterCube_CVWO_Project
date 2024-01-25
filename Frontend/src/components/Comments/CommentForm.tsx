@@ -30,7 +30,15 @@ const CommentForm = ({ topicId, onCommentAdded }: CommentFormProps) => {
         axios
             .post(
                 `http://localhost:3000/api/v1/topics/${topicId}/comments`,
-                comment
+                comment,
+                {
+                    headers: {
+                        Accept: "application/json",
+                        Authorization: `Bearer ${localStorage.getItem(
+                            "token"
+                        )}`,
+                    },
+                }
             )
             .then(() => {
                 onCommentAdded();

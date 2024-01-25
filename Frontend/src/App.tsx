@@ -6,14 +6,19 @@ import Topics from "./components/Topics/Topics";
 import TopicForm from "./components/Topics/TopicForm";
 import { Topic } from "./interfaces";
 import TopicView from "./components/Topics/TopicView";
-import { Container, Typography, Button } from "@mui/material";
+import { Container, Typography, Button, AppBar, Toolbar } from "@mui/material";
 import TopicEdit from "./components/Topics/TopicEdit";
+import SignUpForm from "./components/Users/SignUpForm";
+import SignInForm from "./components/Users/SignInForm";
+
 const API_URL = "http://localhost:3000/api/v1/topics";
 
 function App() {
     const [error, setError] = useState(null);
     const [isMounted, setIsMounted] = useState(false);
     const [topics, setTopics] = useState<Topic[]>([]);
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+
     useEffect(() => {
         axios
             .get<Topic[]>(API_URL)
@@ -28,13 +33,16 @@ function App() {
             });
     }, []);
 
+    useEffect(() => {
+        const token = localStorage.getItem("token");
+        setIsLoggedIn(!!token);
+    }, []);
     if (error) {
         return <div>{error}</div>;
     } else if (!isMounted) {
         return <div></div>;
     }
 
-    // using to update topics with new data without refreshing the page
     const handleTopicCreated = (newTopic: Topic) => {
         setTopics((prevTopics) => [...prevTopics, newTopic]);
     };
@@ -52,9 +60,56 @@ function App() {
             prevTopics.filter((topic) => topic.id !== deletedTopic.id)
         );
     };
+    const handleSignOut = () => {
+        localStorage.removeItem("token"); // Clear the authentication token
+        setIsLoggedIn(false); // Update login status
+    };
+
+    const handleSignIn = () => {
+        setIsLoggedIn(true);
+    };
 
     return (
         <Router>
+            <AppBar position="fixed">
+                <Toolbar>
+                    <Typography
+                        variant="h6"
+                        component={Link}
+                        to="/"
+                        sx={{
+                            flexGrow: 1,
+                            textDecoration: "none",
+                            color: "#FFFFFF",
+                            textAlign: "left",
+                        }}
+                    >
+                        ChatterCube
+                    </Typography>
+                    {isLoggedIn ? (
+                        <Button onClick={handleSignOut} color="inherit">
+                            Sign Out
+                        </Button>
+                    ) : (
+                        <>
+                            <Button
+                                component={Link}
+                                to="/sign-up"
+                                color="inherit"
+                            >
+                                Sign Up
+                            </Button>
+                            <Button
+                                component={Link}
+                                to="/sign-in"
+                                color="inherit"
+                            >
+                                Sign In
+                            </Button>
+                        </>
+                    )}
+                </Toolbar>
+            </AppBar>
             <Routes>
                 <Route
                     path="/create-topic"
@@ -95,6 +150,11 @@ function App() {
                 <Route
                     path="/topics/:id/edit"
                     element={<TopicEdit onUpdateTopic={handleUpdateTopic} />}
+                />
+                <Route path="/sign-up" element={<SignUpForm />} />
+                <Route
+                    path="/sign-in"
+                    element={<SignInForm onSignIn={handleSignIn} />}
                 />
             </Routes>
         </Router>

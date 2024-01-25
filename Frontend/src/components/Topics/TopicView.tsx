@@ -36,14 +36,28 @@ const TopicView = ({ onDeleteTopic }: TopicViewProps) => {
         );
 
         if (isConfirmed) {
-            try {
-                await axios.delete(`http://localhost:3000/api/v1/topics/${id}`);
-                console.log("Topic deleted successfully");
-                onDeleteTopic(topic);
-                navigate("/");
-            } catch (error) {
-                console.error("Error deleting topic:", error);
-            }
+            await axios
+                .delete(`http://localhost:3000/api/v1/topics/${id}`, {
+                    headers: {
+                        Accept: "application/json",
+                        Authorization: `Bearer ${localStorage.getItem(
+                            "token"
+                        )}`,
+                    },
+                })
+                .then(() => {
+                    console.log("Topic deleted successfully");
+                    onDeleteTopic(topic);
+                    navigate("/");
+                })
+                .catch((error) => {
+                    if (error.response.status === 401) {
+                        window.alert(
+                            "You are not authorized to delete this topic"
+                        );
+                        navigate("/");
+                    }
+                });
         }
     };
     return (

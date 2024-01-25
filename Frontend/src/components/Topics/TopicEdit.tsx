@@ -38,7 +38,12 @@ const TopicEdit = ({ onUpdateTopic }: TopicEditProps) => {
         e.preventDefault();
 
         axios
-            .put(`http://localhost:3000/api/v1/topics/${id}`, formData)
+            .put(`http://localhost:3000/api/v1/topics/${id}`, formData, {
+                headers: {
+                    Accept: "application/json",
+                    Authorization: `Bearer ${localStorage.getItem("token")}`,
+                },
+            })
             .then((response) => {
                 const updatedTopic: Topic = response.data;
                 console.log("Topic updated successfully");
@@ -56,6 +61,10 @@ const TopicEdit = ({ onUpdateTopic }: TopicEditProps) => {
                     console.log(error.response.data.errors);
                 } else {
                     console.error("Error updating topic:", error);
+                }
+                if (error.response.status === 401) {
+                    window.alert("You are not authorized to edit this topic!");
+                    navigate("/");
                 }
             });
     };

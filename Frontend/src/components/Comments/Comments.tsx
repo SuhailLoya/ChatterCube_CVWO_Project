@@ -3,12 +3,14 @@ import { Button, Typography, Box, Paper, TextField } from "@mui/material";
 import { Comment } from "../../interfaces";
 import CommentForm from "./CommentForm";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 interface CommentsProps {
     id: string;
 }
 
 const Comments = ({ id }: CommentsProps) => {
+    const navigate = useNavigate();
     const [comments, setComments] = useState<Comment[]>();
     const [editingCommentId, setEditingCommentId] = useState<number | null>(
         null
@@ -53,15 +55,30 @@ const Comments = ({ id }: CommentsProps) => {
     };
 
     const handleDeleteComment = async (commentId: number) => {
-        try {
-            await axios.delete(
-                `http://localhost:3000/api/v1/topics/${id}/comments/${commentId}`
-            );
-            console.log("Comment deleted successfully");
-            refresh();
-        } catch (error) {
-            console.error("Error deleting comment:", error);
-        }
+        await axios
+            .delete(
+                `http://localhost:3000/api/v1/topics/${id}/comments/${commentId}`,
+                {
+                    headers: {
+                        Accept: "application/json",
+                        Authorization: `Bearer ${localStorage.getItem(
+                            "token"
+                        )}`,
+                    },
+                }
+            )
+            .then(() => {
+                console.log("Comment deleted successfully");
+                refresh();
+            })
+            .catch((error) => {
+                if (error.response.status === 401) {
+                    window.alert(
+                        "You are not authorized to delete this comment"
+                    );
+                    navigate("/");
+                }
+            });
     };
 
     const handleEditComment = (commentId: number) => {
@@ -78,7 +95,15 @@ const Comments = ({ id }: CommentsProps) => {
         await axios
             .put(
                 `http://localhost:3000/api/v1/topics/${id}/comments/${commentId}`,
-                { content: editedCommentContent }
+                { content: editedCommentContent },
+                {
+                    headers: {
+                        Accept: "application/json",
+                        Authorization: `Bearer ${localStorage.getItem(
+                            "token"
+                        )}`,
+                    },
+                }
             )
             .then(() => {
                 console.log("Comment edited successfully");
@@ -97,6 +122,12 @@ const Comments = ({ id }: CommentsProps) => {
                     console.log(error.response.data.errors);
                 } else {
                     console.error("Error creating topic:", error);
+                }
+                if (error.response.status === 401) {
+                    window.alert(
+                        "You are not authorized to edit this comment!"
+                    );
+                    navigate("/");
                 }
             });
     };
