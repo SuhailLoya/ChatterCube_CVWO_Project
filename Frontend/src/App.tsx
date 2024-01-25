@@ -6,7 +6,15 @@ import Topics from "./components/Topics/Topics";
 import TopicForm from "./components/Topics/TopicForm";
 import { Topic } from "./interfaces";
 import TopicView from "./components/Topics/TopicView";
-import { Container, Typography, Button, AppBar, Toolbar } from "@mui/material";
+import {
+    Container,
+    Typography,
+    Button,
+    AppBar,
+    Toolbar,
+    MenuItem,
+    Select,
+} from "@mui/material";
 import TopicEdit from "./components/Topics/TopicEdit";
 import SignUpForm from "./components/Users/SignUpForm";
 import SignInForm from "./components/Users/SignInForm";
@@ -18,6 +26,28 @@ function App() {
     const [isMounted, setIsMounted] = useState(false);
     const [topics, setTopics] = useState<Topic[]>([]);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [currentUserEmail, setCurrentUserEmail] = useState("");
+
+    useEffect(() => {
+        axios
+            .get("http://localhost:3000/user", {
+                headers: {
+                    Accept: "application/json",
+                    Authorization: `Bearer ${localStorage.getItem("token")}`,
+                },
+            })
+            .then((response) => {
+                setCurrentUserEmail(response.data.email);
+            })
+            .catch((error) => {
+                console.error("Error fetching current user:", error);
+            });
+    }, []);
+
+    useEffect(() => {
+        const token = localStorage.getItem("token");
+        setIsLoggedIn(!!token);
+    }, []);
 
     useEffect(() => {
         axios
@@ -32,16 +62,6 @@ function App() {
                 setError(error);
             });
     }, []);
-
-    useEffect(() => {
-        const token = localStorage.getItem("token");
-        setIsLoggedIn(!!token);
-    }, []);
-    if (error) {
-        return <div>{error}</div>;
-    } else if (!isMounted) {
-        return <div></div>;
-    }
 
     const handleTopicCreated = (newTopic: Topic) => {
         setTopics((prevTopics) => [...prevTopics, newTopic]);
@@ -60,12 +80,26 @@ function App() {
             prevTopics.filter((topic) => topic.id !== deletedTopic.id)
         );
     };
+
     const handleSignOut = () => {
         localStorage.removeItem("token"); // Clear the authentication token
         setIsLoggedIn(false); // Update login status
     };
 
-    const handleSignIn = () => {
+    const handleSignIn = async () => {
+        await axios
+            .get("http://localhost:3000/user", {
+                headers: {
+                    Accept: "application/json",
+                    Authorization: `Bearer ${localStorage.getItem("token")}`,
+                },
+            })
+            .then((response) => {
+                setCurrentUserEmail(response.data.email);
+            })
+            .catch((error) => {
+                console.error("Error fetching current user:", error);
+            });
         setIsLoggedIn(true);
     };
 
@@ -87,9 +121,20 @@ function App() {
                         ChatterCube
                     </Typography>
                     {isLoggedIn ? (
-                        <Button onClick={handleSignOut} color="inherit">
-                            Sign Out
-                        </Button>
+                        <>
+                            <Select
+                                value=""
+                                displayEmpty
+                                sx={{ color: "#FFFFFF" }}
+                            >
+                                <MenuItem value="" disabled>
+                                    Hi {currentUserEmail}!
+                                </MenuItem>
+                                <MenuItem onClick={handleSignOut}>
+                                    Sign Out
+                                </MenuItem>
+                            </Select>
+                        </>
                     ) : (
                         <>
                             <Button
