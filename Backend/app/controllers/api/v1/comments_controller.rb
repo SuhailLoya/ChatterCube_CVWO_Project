@@ -3,8 +3,8 @@ class Api::V1::CommentsController < ApplicationController
 
   # GET /comments
   def index
-    @topic = Topic.find(params[:topic_id])
-    @comments = @topic.comments
+    @comments = Comment.where(topic_id: params[:topic_id])
+                       .order(id: :desc)
   
     render json: @comments
   end
@@ -38,7 +38,7 @@ class Api::V1::CommentsController < ApplicationController
     if @comment.update(comment_params)
       render json: @comment
     else
-      rrender json: { errors: @comment.errors.full_messages }, status: :unprocessable_entity
+      render json: { errors: @comment.errors.full_messages }, status: :unprocessable_entity
     end
   end
 

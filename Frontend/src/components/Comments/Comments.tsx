@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, Typography, Box, Paper } from "@mui/material";
+import { Button, Typography, Box, Paper, TextField } from "@mui/material";
 import { Comment } from "../../interfaces";
 import CommentForm from "./CommentForm";
 import axios from "axios";
@@ -10,6 +10,13 @@ interface CommentsProps {
 
 const Comments = ({ id }: CommentsProps) => {
     const [comments, setComments] = useState<Comment[]>();
+    const [editingCommentId, setEditingCommentId] = useState<number | null>(
+        null
+    );
+    const [errors, setErrors] = useState<string[]>([]);
+    const [editedCommentContent, setEditedCommentContent] =
+        useState<string>("");
+
     useEffect(() => {
         axios
             .get<Comment[]>(
@@ -23,9 +30,15 @@ const Comments = ({ id }: CommentsProps) => {
                 console.error("Error fetching topic details:", error);
             });
     }, [id]);
+
     if (!comments) {
         return <div>Loading...</div>;
     }
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setEditedCommentContent(e.target.value);
+        setErrors([]);
+    };
 
     const refresh = () => {
         axios
@@ -51,8 +64,47 @@ const Comments = ({ id }: CommentsProps) => {
         }
     };
 
-    const handleEditComment = async (commentId: number) => {
-        console.log("Edit");
+    const handleEditComment = (commentId: number) => {
+        setEditingCommentId(commentId);
+        const existingComment = comments.find(
+            (comment) => comment.id === commentId
+        );
+        if (existingComment) {
+            setEditedCommentContent(existingComment.content);
+        }
+    };
+
+    const handleSaveEdit = async (commentId: number) => {
+        await axios
+            .put(
+                `http://localhost:3000/api/v1/topics/${id}/comments/${commentId}`,
+                { content: editedCommentContent }
+            )
+            .then(() => {
+                console.log("Comment edited successfully");
+                refresh();
+                setEditingCommentId(null);
+                setEditedCommentContent("");
+            })
+            .catch((error) => {
+                if (
+                    error.response &&
+                    error.response.data &&
+                    error.response.data.errors
+                ) {
+                    // Handle validation errors from the server
+                    setErrors(error.response.data.errors);
+                    console.log(error.response.data.errors);
+                } else {
+                    console.error("Error creating topic:", error);
+                }
+            });
+    };
+
+    const handleCancelEdit = () => {
+        setErrors([]);
+        setEditingCommentId(null);
+        setEditedCommentContent("");
     };
 
     return (
@@ -65,51 +117,92 @@ const Comments = ({ id }: CommentsProps) => {
                     <Paper
                         elevation={1}
                         sx={{ bgcolor: "lightblue", position: "relative" }}
+                        key={comment.id}
                     >
                         <Box sx={{ p: 0.5, m: 3 }}>
-                            <Typography>{comment.content}</Typography>
-                            <Typography>
-                                <strong>Username:</strong> {comment.username}
-                            </Typography>
-
-                            <Box
-                                sx={{
-                                    position: "absolute",
-                                    bottom: 5,
-                                    right: 5,
-                                    color: "grey",
-                                    cursor: "pointer",
-                                    textDecoration: "underline",
-                                    fontSize: "0.8rem", // Adjust the font size as needed
-                                    mr: 1, // Add some right margin for spacing
-                                }}
-                                onClick={() =>
-                                    comment.id
-                                        ? handleEditComment(comment.id)
-                                        : null
-                                }
-                            >
-                                Edit
-                            </Box>
-
-                            <Box
-                                sx={{
-                                    position: "absolute",
-                                    bottom: 5,
-                                    right: 50, // Adjust the position as needed for spacing
-                                    color: "grey",
-                                    cursor: "pointer",
-                                    textDecoration: "underline",
-                                    fontSize: "0.8rem", // Adjust the font size as needed
-                                }}
-                                onClick={() =>
-                                    comment.id
-                                        ? handleDeleteComment(comment.id)
-                                        : null
-                                }
-                            >
-                                Delete
-                            </Box>
+                            {editingCommentId === comment.id ? (
+                                <>
+                                    <TextField
+                                        fullWidth
+                                        multiline
+                                        label="Edit Comment"
+                                        value={editedCommentContent}
+                                        onChange={handleChange}
+                                        error={errors.length > 0}
+                                        helperText={
+                                            errors.length > 0 ? errors[0] : " "
+                                        }
+                                        sx={{ mt: 1 }}
+                                    />
+                                    <Button
+                                        variant="contained"
+                                        color="secondary"
+                                        onClick={() =>
+                                            comment.id
+                                                ? handleSaveEdit(comment.id)
+                                                : null
+                                        }
+                                        sx={{ mt: 1, mr: 1 }}
+                                    >
+                                        Save
+                                    </Button>
+                                    <Button
+                                        variant="contained"
+                                        color="error"
+                                        onClick={handleCancelEdit}
+                                        sx={{ mt: 1 }}
+                                    >
+                                        Cancel
+                                    </Button>
+                                </>
+                            ) : (
+                                <>
+                                    <Typography>{comment.content}</Typography>
+                                    <Typography>
+                                        <strong>Username:</strong>{" "}
+                                        {comment.username}
+                                    </Typography>
+                                    <Box
+                                        sx={{
+                                            position: "absolute",
+                                            bottom: 5,
+                                            right: 5,
+                                            color: "grey",
+                                            cursor: "pointer",
+                                            textDecoration: "underline",
+                                            fontSize: "0.8rem",
+                                            mr: 1,
+                                        }}
+                                        onClick={() =>
+                                            comment.id
+                                                ? handleEditComment(comment.id)
+                                                : null
+                                        }
+                                    >
+                                        Edit
+                                    </Box>
+                                    <Box
+                                        sx={{
+                                            position: "absolute",
+                                            bottom: 5,
+                                            right: 50,
+                                            color: "grey",
+                                            cursor: "pointer",
+                                            textDecoration: "underline",
+                                            fontSize: "0.8rem",
+                                        }}
+                                        onClick={() =>
+                                            comment.id
+                                                ? handleDeleteComment(
+                                                      comment.id
+                                                  )
+                                                : null
+                                        }
+                                    >
+                                        Delete
+                                    </Box>
+                                </>
+                            )}
                         </Box>
                     </Paper>
                 ))}
