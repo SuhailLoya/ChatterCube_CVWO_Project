@@ -67,7 +67,10 @@ const Comments = ({ id }: CommentsProps) => {
                         sx={{ bgcolor: "lightblue", position: "relative" }}
                     >
                         <Box sx={{ p: 0.5, m: 3 }}>
-                            {/* Comment content and username */}
+                            <Typography>{comment.content}</Typography>
+                            <Typography>
+                                <strong>Username:</strong> {comment.username}
+                            </Typography>
 
                             <Box
                                 sx={{
