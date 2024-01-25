@@ -27,7 +27,7 @@ const Comments = ({ id }: CommentsProps) => {
         return <div>Loading...</div>;
     }
 
-    const handleCommentAdded = () => {
+    const refresh = () => {
         axios
             .get(`http://localhost:3000/api/v1/topics/${id}/comments`)
             .then((response) => response.data)
@@ -38,6 +38,23 @@ const Comments = ({ id }: CommentsProps) => {
                 console.error("Error fetching updated topic details:", error);
             });
     };
+
+    const handleDeleteComment = async (commentId: number) => {
+        try {
+            await axios.delete(
+                `http://localhost:3000/api/v1/topics/${id}/comments/${commentId}`
+            );
+            console.log("Comment deleted successfully");
+            refresh();
+        } catch (error) {
+            console.error("Error deleting comment:", error);
+        }
+    };
+
+    const handleEditComment = async (commentId: number) => {
+        console.log("Edit");
+    };
+
     return (
         <Box sx={{ p: 3, width: 1000 }}>
             <Typography variant="h6" sx={{ m: 2 }}>
@@ -45,20 +62,56 @@ const Comments = ({ id }: CommentsProps) => {
             </Typography>
             <ul style={{ padding: 0 }}>
                 {comments.map((comment) => (
-                    <Paper elevation={1} sx={{ bgcolor: "lightblue" }}>
+                    <Paper
+                        elevation={1}
+                        sx={{ bgcolor: "lightblue", position: "relative" }}
+                    >
                         <Box sx={{ p: 0.5, m: 3 }}>
-                            <li>
-                                <Typography>{comment.content}</Typography>
-                                <Typography>
-                                    <strong>Username:</strong>{" "}
-                                    {comment.username}
-                                </Typography>
-                            </li>
+                            {/* Comment content and username */}
+
+                            <Box
+                                sx={{
+                                    position: "absolute",
+                                    bottom: 5,
+                                    right: 5,
+                                    color: "grey",
+                                    cursor: "pointer",
+                                    textDecoration: "underline",
+                                    fontSize: "0.8rem", // Adjust the font size as needed
+                                    mr: 1, // Add some right margin for spacing
+                                }}
+                                onClick={() =>
+                                    comment.id
+                                        ? handleEditComment(comment.id)
+                                        : null
+                                }
+                            >
+                                Edit
+                            </Box>
+
+                            <Box
+                                sx={{
+                                    position: "absolute",
+                                    bottom: 5,
+                                    right: 50, // Adjust the position as needed for spacing
+                                    color: "grey",
+                                    cursor: "pointer",
+                                    textDecoration: "underline",
+                                    fontSize: "0.8rem", // Adjust the font size as needed
+                                }}
+                                onClick={() =>
+                                    comment.id
+                                        ? handleDeleteComment(comment.id)
+                                        : null
+                                }
+                            >
+                                Delete
+                            </Box>
                         </Box>
                     </Paper>
                 ))}
             </ul>
-            <CommentForm topicId={id} onCommentAdded={handleCommentAdded} />
+            <CommentForm topicId={id} onCommentAdded={refresh} />
         </Box>
     );
 };
